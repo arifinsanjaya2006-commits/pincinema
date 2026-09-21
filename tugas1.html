@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Film Indonesia Seru</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        color: #222;
+        background: #fafafa;
+        line-height: 1.5;
+    }
+    .wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    header { text-align: center; }
+    header h1 { margin-bottom: 0; color: #1a237e; }
+    header h2 { color: #444; margin-top: 4px; font-weight: normal; }
+
+    nav {
+        border-top: 2px solid #1a237e;
+        border-bottom: 2px solid #1a237e;
+        padding: 12px 0;
+        margin: 20px 0;
+        text-align: center;
+    }
+    nav a {
+        margin: 0 25px;
+        text-decoration: none;
+        color: #222;
+        font-weight: 500;
+        cursor: pointer;
+        padding-bottom: 4px;
+    }
+    nav a.active {
+        text-decoration: underline;
+        font-weight: bold;
+        color: #1a237e;
+    }
+
+    section.page { display: none; }
+    section.page.active { display: block; }
+
+    h3.section-title {
+        color: #1a237e;
+        border-left: 5px solid #c62828;
+        padding-left: 12px;
+        margin-bottom: 20px;
+    }
+
+    .film {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid #ccc;
+        align-items: flex-start;
+    }
+    .poster-img {
+        width: 130px;
+        height: 190px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: #ccc;
+        border-radius: 6px;
+    }
+    .film-info { flex: 2 1 300px; min-width: 220px; }
+    .film-info h4 { margin: 0 0 5px 0; font-size: 17px; }
+    .meta-row { margin-bottom: 6px; }
+    .badge {
+        display: inline-block;
+        background: #eef0fa;
+        color: #1a237e;
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        margin-right: 6px;
+        margin-bottom: 4px;
+    }
+    .sutradara { color: #666; font-size: 14px; font-style: italic; margin-bottom: 8px; }
+    .harga {
+        font-weight: bold;
+        color: #c62828;
+        background: #fdecea;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+    }
+    .sinopsis { font-size: 14px; margin-top: 8px; }
+
+    .film-trailer { flex: 1 1 260px; min-width: 220px; max-width: 320px; }
+    .film-trailer iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        height: auto;
+        border: none;
+        border-radius: 6px;
+    }
+    .film-trailer p { margin: 6px 0 0 0; font-size: 12px; color: #666; text-align: center; }
+
+    @media (max-width: 700px) {
+        .film { flex-direction: column; }
+        .poster-img { width: 100%; height: 220px; }
+        .film-trailer { max-width: 100%; }
+    }
+
+    .profil-box {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .profil-foto {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #ccc;
+        flex-shrink: 0;
+    }
+    .profil-text { flex: 1 1 300px; min-width: 220px; }
+    .profil-text ul { padding-left: 20px; }
+
+    .kontak-detail-list {
+        list-style: none;
+        padding: 0;
+        margin: 16px 0 0 0;
+    }
+    .kontak-detail-list li {
+        background: #eef0fa;
+        padding: 10px 14px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    .kontak-detail-list li strong {
+        color: #1a237e;
+        display: inline-block;
+        min-width: 110px;
+    }
+
+    .tentang-box {
+        background: #eef0fa;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #1a237e;
+    }
+
+    .gallery-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .gallery-item {
+        flex: 1 1 200px;
+        max-width: calc(33.333% - 10px);
+        background: #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        text-align: center;
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        display: block;
+    }
+    .gallery-item p {
+        font-size: 13px;
+        color: #555;
+        margin: 6px 0;
+    }
+    @media (max-width: 700px) {
+        .gallery-item { max-width: calc(50% - 8px); }
+    }
+    @media (max-width: 480px) {
+        .gallery-item { max-width: 100%; }
+    }
+
+    .kontak-wrap {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+    .kontak-form {
+        flex: 1 1 300px;
+        min-width: 250px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .kontak-form label { font-weight: bold; font-size: 14px; }
+    .kontak-form input,
+    .kontak-form textarea {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+    .kontak-form button {
+        background: #1a237e;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .kontak-form button:hover { background: #131a5c; }
+
+    .kontak-info {
+        flex: 1 1 250px;
+        min-width: 220px;
+        background: #eef0fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    .kontak-info h4 { color: #1a237e; margin-top: 0; }
+    .kontak-info p { font-size: 14px; margin: 8px 0; }
+
+    .trailer-audio {
+        margin-top: 10px;
+        width: 100%;
+    }
+    .trailer-audio audio {
+        width: 100%;
+        height: 32px;
+    }
+
+    footer {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #666;
+        text-align: center;
+        padding: 15px 0;
+        border-top: 1px solid #ccc;
+    }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <header>
+        <h1>Selamat Datang Di PinCinema</h1>
+        <h2>Film Indonesia Seru</h2>
+    </header>
+
+    <nav>
+        <a class="nav-link active" data-page="beranda" onclick="gantiHalaman('beranda', this)">Beranda</a>
+        <a class="nav-link" data-page="profil" onclick="gantiHalaman('profil', this)">Profil</a>
+        <a class="nav-link" data-page="tentang" onclick="gantiHalaman('tentang', this)">Tentang</a>
+        <a class="nav-link" data-page="foto" onclick="gantiHalaman('foto', this)">Foto</a>
+        <a class="nav-link" data-page="kontak" onclick="gantiHalaman('kontak', this)">Kontak</a>
+    </nav>
+
+    <main>
+
+        <!-- ===================== BERANDA ===================== -->
+        <section id="beranda" class="page active">
+            <h3 class="section-title">Daftar Film Indonesia</h3>
+
+            <div class="film">
+                <img src="jangrik bos.jpg" alt="Warkop DKI Reborn" class="poster-img">
+                <div class="film-info">
+                    <h4>1. Warkop DKI Reborn: Jangkrik Boss! Part 1 (2016)</h4>
+                    <p class="sutradara">Disutradarai oleh Anggy Umbara &bull; Durasi 100 menit</p>
+                    <div class="meta-row">
+                        <span class="badge">Komedi</span>
+                        <span class="badge">⭐ 6.8/10</span>
+                        <span class="harga">Tiket Rp.50.000</span>
+                    </div>
+                    <p class="sinopsis">Film ini menghidupkan kembali trio legendaris Dono, Kasino, dan Indro dengan gaya komedi slapstick khas Warkop yang dikemas untuk generasi baru. Ceritanya berputar pada tiga sekawan yang membuka usaha keamanan namun berujung pada berbagai kekacauan lucu.</p>
+                </div>
+                <div class="film-trailer">
+                    <iframe src="https://www.youtube.com/embed/lmuNabammwk" title="Trailer Warkop DKI Reborn" allowfullscreen></iframe>
+                    <p>Trailer Resmi</p>
+                    <div class="trailer-audio">
+                        <audio controls>
+                            <source src="tugas 1/sound jangkrik bos.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+
+            <div class="film">
+                <img src="toko seblah.jfif" alt="Cek Toko Sebelah" class="poster-img">
+                <div class="film-info">
+                    <h4>2. Cek Toko Sebelah (2016)</h4>
+                    <p class="sutradara">Disutradarai oleh Ernest Prakasa &bull; Durasi 110 menit</p>
+                    <div class="meta-row">
+                        <span class="badge">Komedi</span>
+                        <span class="badge">Drama Keluarga</span>
+                        <span class="badge">⭐ 7.4/10</span>
+                        <span class="harga">Tiket Rp.50.000</span>
+                    </div>
+                    <p class="sinopsis">Mengisahkan konflik keluarga keturunan Tionghoa dalam menentukan siapa yang akan meneruskan toko kelontong milik sang ayah. Dibalut dengan humor khas Ernest Prakasa, film ini juga menyentuh isu keluarga dan hubungan antar saudara.</p>
+                </div>
+                <div class="film-trailer">
+                    <iframe src="https://www.youtube.com/embed/tEqCTPJGTk8" title="Trailer Cek Toko Sebelah" allowfullscreen></iframe>
+                    <p>Trailer Resmi</p>
+                    <div class="trailer-audio">
+                        <audio controls>
+                            <source src="soundtrack-toko-sebelah.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+
+            <div class="film">
+                <img src="yowis.jpg" alt="Yowis Ben" class="poster-img">
+                <div class="film-info">
+                    <h4>3. Yowis Ben (2018)</h4>
+                    <p class="sutradara">Disutradarai oleh Bayu Skak &amp; Fajar Nugros &bull; Durasi 96 menit</p>
+                    <div class="meta-row">
+                        <span class="badge">Komedi</span>
+                        <span class="badge">Musikal</span>
+                        <span class="badge">⭐ 7.0/10</span>
+                        <span class="harga">Tiket Rp.50.000</span>
+                    </div>
+                    <p class="sinopsis">Film komedi bernuansa remaja yang bercerita tentang Bayu, seorang siswa SMA yang membentuk band bernama Yowis Ben setelah patah hati. Dengan dialog berbahasa Jawa yang kental dan humor yang jujur.</p>
+                </div>
+                <div class="film-trailer">
+                    <iframe src="https://www.youtube.com/embed/PvjiH2U6G-Q" title="Trailer Yowis Ben" allowfullscreen></iframe>
+                    <p>Trailer Resmi</p>
+                    <div class="trailer-audio">
+                        <audio controls>
+                            <source src="soundtrack-yowis-ben.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PROFIL ===================== -->
+        <section id="profil" class="page">
+            <h3 class="section-title">Profil Pengelola</h3>
+            <div class="profil-box">
+                <img src="foto-profil.jpg" alt="Foto Profil" class="profil-foto">
+                <div class="profil-text">
+                    <h4>arifin sanjaya</h4>
+                    <p>Halo! Saya pengelola sekaligus penulis konten di website <strong>Film Indonesia Seru</strong> ini. Saya memiliki ketertarikan besar terhadap dunia perfilman, khususnya perkembangan industri sinema Tanah Air dari masa ke masa.</p>
+                    <ul class="kontak-detail-list">
+                        <li><strong>Email:</strong> arifin@gmail.com</li>
+                        <li><strong>No. HP:</strong> 085211379801</li>
+                        <li><strong>Instagram:</strong> @arifinsnjya_</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== TENTANG ===================== -->
+        <section id="tentang" class="page">
+            <h3 class="section-title">Tentang Website Ini</h3>
+            <div class="tentang-box">
+                <p><strong>Pin Cinema-Film Indonesia Seru</strong> dibuat sebagai platform sederhana yang menghadirkan informasi dan rekomendasi seputar film-film Indonesia, mulai dari film klasik yang legendaris hingga karya-karya terbaru yang sedang populer.</p>
+                <p>Tujuan utama website ini adalah membantu pengunjung menemukan tontonan berkualitas dari sineas Tanah Air, lengkap dengan sinopsis, informasi sutradara, rating, harga tiket, hingga cuplikan trailer resmi — semuanya dalam satu tempat yang mudah diakses.</p>
+                <p>Selain itu, website ini juga diharapkan dapat menjadi wadah apresiasi terhadap perkembangan industri perfilman Indonesia, sekaligus mendorong lebih banyak orang untuk mendukung karya anak bangsa.</p>
+            </div>
+        </section>
+
+        <!-- ===================== FOTO / GALERI ===================== -->
+        <section id="foto" class="page">
+            <h3 class="section-title">Galeri Foto</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="jangrik bos.jpg" alt="Warkop DKI Reborn">
+                    <p>Warkop DKI Reborn</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="toko seblah.jfif" alt="Cek Toko Sebelah">
+                    <p>Cek Toko Sebelah</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="yowis.jpg" alt="Yowis Ben">
+                    <p>Yowis Ben</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== KONTAK ===================== -->
+        <section id="kontak" class="page">
+            <h3 class="section-title">Hubungi Kami</h3>
+            <div class="kontak-wrap">
+                <form class="kontak-form" onsubmit="return kirimPesan(event)">
+                    <label for="nama">Nama</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="nama@email.com" required>
+
+                    <label for="pesan">Pesan</label>
+                    <textarea id="pesan" name="pesan" rows="5" placeholder="Tulis pesan Anda di sini..." required></textarea>
+
+                    <button type="submit">Kirim Pesan</button>
+                </form>
+
+                <div class="kontak-info">
+                    <h4>Informasi Kontak</h4>
+                    <p>📧 Email: arifin@gmail.com</p>
+                    <p>📱 Instagram: @arifinsnjya_</p>
+                    <p>📞 No. HP: 085211379801</p>
+                    <p>📍 Alamat: Jakarta, Indonesia</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; web film seru indonesia.</p>
+    </footer>
+
+</div>
+
+<script>
+    function gantiHalaman(idHalaman, elemenLink) {
+        document.querySelectorAll('section.page').forEach(function (sec) {
+            sec.classList.remove('active');
+        });
+        document.getElementById(idHalaman).classList.add('active');
+
+        document.querySelectorAll('.nav-link').forEach(function (link) {
+            link.classList.remove('active');
+        });
+        elemenLink.classList.add('active');
+    }
+
+    function kirimPesan(event) {
+        event.preventDefault();
+        alert('Terima kasih! Pesan Anda telah terkirim (simulasi — belum terhubung ke server).');
+        event.target.reset();
+        return false;
+    }
+</script>
+
+</body>
+</html>
