@@ -2,193 +2,946 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SD Negeri Cikuya 3</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Film Indonesia Seru</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        color: #222;
+        background: #fafafa;
+        line-height: 1.5;
+    }
+    .wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    header { text-align: center; }
+    header h1 { margin-bottom: 0; color: #1a237e; }
+    header h2 { color: #444; margin-top: 4px; font-weight: normal; }
+
+    nav {
+        border-top: 2px solid #1a237e;
+        border-bottom: 2px solid #1a237e;
+        padding: 12px 0;
+        margin: 20px 0;
+        text-align: center;
+    }
+    nav a {
+        margin: 0 25px;
+        text-decoration: none;
+        color: #222;
+        font-weight: 500;
+        cursor: pointer;
+        padding-bottom: 4px;
+    }
+    nav a.active {
+        text-decoration: underline;
+        font-weight: bold;
+        color: #1a237e;
+    }
+
+    section.page { display: none; }
+    section.page.active { display: block; }
+
+    h3.section-title {
+        color: #1a237e;
+        border-left: 5px solid #c62828;
+        padding-left: 12px;
+        margin-bottom: 20px;
+    }
+
+    .film {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid #ccc;
+        align-items: flex-start;
+    }
+    .poster-img {
+        width: 130px;
+        height: 190px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: #ccc;
+        border-radius: 6px;
+    }
+    .film-info { flex: 2 1 300px; min-width: 220px; }
+    .film-info h4 { margin: 0 0 5px 0; font-size: 17px; }
+    .meta-row { margin-bottom: 6px; }
+    .badge {
+        display: inline-block;
+        background: #eef0fa;
+        color: #1a237e;
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        margin-right: 6px;
+        margin-bottom: 4px;
+    }
+    .sutradara { color: #666; font-size: 14px; font-style: italic; margin-bottom: 8px; }
+    .harga {
+        font-weight: bold;
+        color: #c62828;
+        background: #fdecea;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+    }
+    .sinopsis { font-size: 14px; margin-top: 8px; }
+
+    .film-trailer { flex: 1 1 260px; min-width: 220px; max-width: 320px; }
+    .film-trailer iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        height: auto;
+        border: none;
+        border-radius: 6px;
+    }
+    .film-trailer p { margin: 6px 0 0 0; font-size: 12px; color: #666; text-align: center; }
+
+
+    /* ===== Film dapat diklik ===== */
+    .film.clickable {
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    .film.clickable:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        background: #fff;
+    }
+
+    /* ===== Modal Detail Film ===== */
+    .film-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        inset: 0;
+        background: rgba(0,0,0,0.65);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .film-modal.show { display: flex; }
+    .film-modal-content {
+        background: #fff;
+        width: 100%;
+        max-width: 850px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 12px;
+        padding: 25px;
+        position: relative;
+    }
+    .film-modal-close {
+        position: absolute;
+        right: 18px;
+        top: 12px;
+        border: none;
+        background: transparent;
+        font-size: 30px;
+        cursor: pointer;
+        color: #555;
+    }
+    .film-modal-body {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    .film-modal-poster {
+        width: 180px;
+        height: 260px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .film-modal-info { flex: 1 1 350px; }
+    .film-modal-info h3 { color: #1a237e; margin-top: 0; }
+    .film-modal-info p { font-size: 14px; }
+    .film-modal-trailer iframe {
+        width: 100%;
+        max-width: 600px;
+        aspect-ratio: 16 / 9;
+        border: none;
+        border-radius: 8px;
+    }
+    @media (max-width: 600px) {
+        .film-modal-content { padding: 18px; }
+        .film-modal-poster { width: 130px; height: 190px; }
+    }
+
+    @media (max-width: 700px) {
+        .film { flex-direction: column; }
+        .poster-img { width: 100%; height: 220px; }
+        .film-trailer { max-width: 100%; }
+    }
+
+    .profil-box {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .profil-foto {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #ccc;
+        flex-shrink: 0;
+    }
+    .profil-text { flex: 1 1 300px; min-width: 220px; }
+    .profil-text ul { padding-left: 20px; }
+
+    .kontak-detail-list {
+        list-style: none;
+        padding: 0;
+        margin: 16px 0 0 0;
+    }
+    .kontak-detail-list li {
+        background: #eef0fa;
+        padding: 10px 14px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    .kontak-detail-list li strong {
+        color: #1a237e;
+        display: inline-block;
+        min-width: 110px;
+    }
+
+    .tentang-box {
+        background: #eef0fa;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #1a237e;
+    }
+
+    .gallery-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .gallery-item {
+        flex: 1 1 200px;
+        max-width: calc(33.333% - 10px);
+        background: #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        text-align: center;
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        display: block;
+    }
+    .gallery-item p {
+        font-size: 13px;
+        color: #555;
+        margin: 6px 0;
+    }
+    @media (max-width: 700px) {
+        .gallery-item { max-width: calc(50% - 8px); }
+    }
+    @media (max-width: 480px) {
+        .gallery-item { max-width: 100%; }
+    }
+
+    .kontak-wrap {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+    .kontak-form {
+        flex: 1 1 300px;
+        min-width: 250px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .kontak-form label { font-weight: bold; font-size: 14px; }
+    .kontak-form input,
+    .kontak-form textarea {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+    .kontak-form button {
+        background: #1a237e;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .kontak-form button:hover { background: #131a5c; }
+
+    .kontak-info {
+        flex: 1 1 250px;
+        min-width: 220px;
+        background: #eef0fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    .kontak-info h4 { color: #1a237e; margin-top: 0; }
+    .kontak-info p { font-size: 14px; margin: 8px 0; }
+
+    .trailer-audio {
+        margin-top: 10px;
+        width: 100%;
+    }
+    .trailer-audio audio {
+        width: 100%;
+        height: 32px;
+    }
+
+    footer {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #666;
+        text-align: center;
+        padding: 15px 0;
+        border-top: 1px solid #ccc;
+    }
+
+
+    /* ===== TABEL REKOMENDASI FILM ===== */
+    .rekomendasi-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .rekomendasi-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: #fff;
+    }
+
+    .rekomendasi-table th {
+        background: #1a237e;
+        color: #fff;
+        padding: 12px 10px;
+        text-align: center;
+    }
+
+    .rekomendasi-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .rekomendasi-table tr:nth-child(even) {
+        background: #f5f6fb;
+    }
+
+    .rekomendasi-table tr:hover {
+        background: #eef0fa;
+    }
+
+    .rekomendasi-poster {
+        width: 80px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .rekomendasi-genre {
+        display: inline-block;
+        background: #eef0fa;
+        color: #1a237e;
+        padding: 4px 9px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .rekomendasi-rating {
+        font-weight: bold;
+        color: #c62828;
+    }
+
+    .rekomendasi-btn {
+        display: inline-block;
+        background: #1a237e;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .rekomendasi-btn:hover {
+        background: #131a5c;
+    }
+
+    /* ===== Paket Berlangganan (dark mode) ===== */
+    .subscription-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 24px;
+        padding: 30px 20px;
+        background-color: #121212;
+        border-radius: 12px;
+    }
+
+    .sub-card {
+        position: relative;
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 28px 24px;
+        width: 280px;
+        color: #f1f1f1;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .sub-card:hover {
+        transform: translateY(-6px);
+        border-color: #c62828;
+    }
+
+    .sub-card-highlight {
+        background-color: #262626;
+        border: 2px solid #c62828;
+        transform: scale(1.05);
+    }
+
+    .sub-card-highlight:hover {
+        transform: scale(1.05) translateY(-6px);
+    }
+
+    .sub-badge {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #c62828;
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 4px 14px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .sub-card-header {
+        text-align: center;
+        margin-bottom: 18px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #333;
+    }
+
+    .sub-name {
+        margin: 0 0 8px 0;
+        font-size: 22px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #ffffff;
+    }
+
+    .sub-price {
+        margin: 0;
+        font-size: 26px;
+        font-weight: bold;
+        color: #c62828;
+    }
+
+    .sub-price span {
+        font-size: 13px;
+        font-weight: normal;
+        color: #aaaaaa;
+    }
+
+    .sub-features {
+        flex-grow: 1;
+        margin: 0 0 24px 0;
+        padding-left: 20px;
+        font-size: 14px;
+        color: #d0d0d0;
+    }
+
+    .sub-features li {
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+
+    .sub-btn {
+        background-color: #c62828;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .sub-btn:hover {
+        background-color: #a01f1f;
+    }
+
+    @media (max-width: 700px) {
+        .sub-card, .sub-card-highlight {
+            width: 90%;
+            transform: none;
+        }
+        .sub-card:hover, .sub-card-highlight:hover {
+            transform: translateY(-4px);
+        }
+    }
+</style>
 </head>
 <body>
-<div class="topbar"> Kec. Solear, Kab. Tangerang, Prov. Banten</div>
 
-<header class="header">
-  <a href="#beranda" class="brand">
-    <span class="logo"><img src="logo.png" alt="Logo SDN Cikuya 3"></span>
-    <span><strong>SD NEGERI CIKUYA 3</strong><small>"Belajar, tumbuh, berprestasi."</small></span>
-  </a>
-  <nav class="desktop-nav">
+<div class="wrapper">
 
-  <a href="#beranda" class="active">
-    Beranda
-  </a>
+    <header>
+        <h1>Selamat Datang Di PinCinema</h1>
+        <h2>Film Indonesia Seru</h2>
+    </header>
 
-  <a href="profil.html">
-    Profil Sekolah
-  </a>
+    <nav>
+        <a class="nav-link active" data-page="beranda" onclick="gantiHalaman('beranda', this)">Beranda</a>
+        <a class="nav-link" data-page="profil" onclick="gantiHalaman('profil', this)">Profil</a>
+        <a class="nav-link" data-page="tentang" onclick="gantiHalaman('tentang', this)">Tentang</a>
+        <a class="nav-link" data-page="foto" onclick="gantiHalaman('foto', this)">Foto</a>
+        <a class="nav-link" data-page="rekomendasi" onclick="gantiHalaman('rekomendasi', this)">Rekomendasi</a>
+        <a class="nav-link" data-page="paket" onclick="gantiHalaman('paket', this)">Paket</a>
+        <a class="nav-link" data-page="kontak" onclick="gantiHalaman('kontak', this)">Kontak</a>
+    </nav>
 
-  <a href="#galeri">
-    Galeri Kegiatan
-  </a>
+    <main>
 
-  <a href="#warta">
-    Berita &amp; Informasi
-  </a>
+        <!-- ===================== BERANDA ===================== -->
+        <section id="beranda" class="page active">
+            <h3 class="section-title">Daftar Film Indonesia</h3>
 
-  <a href="#legalitas">
-    Akreditasi
-  </a>
+            <div class="film clickable" onclick="bukaFilm(0)" title="Klik untuk melihat detail film">
+                <img src="jangrik bos.jpg" alt="Warkop DKI Reborn" class="poster-img">
+                <div class="film-info">
+                    <h4>1. Warkop DKI Reborn: Jangkrik Boss! Part 1 (2016)</h4>
+                    <p class="sutradara">Disutradarai oleh Anggy Umbara &bull; Durasi 100 menit</p>
+                    <div class="meta-row">
+                        <span class="badge">Komedi</span>
+                        <span class="badge">⭐ 6.8/10</span>
+                        <span class="harga">Tiket Rp.50.000</span>
+                    </div>
+                    <p class="sinopsis">Film ini menghidupkan kembali trio legendaris Dono, Kasino, dan Indro dengan gaya komedi slapstick khas Warkop yang dikemas untuk generasi baru. Ceritanya berputar pada tiga sekawan yang membuka usaha keamanan namun berujung pada berbagai kekacauan lucu.</p>
+                </div>
+                <div class="film-trailer">
+                    <iframe src="https://www.youtube.com/embed/lmuNabammwk" title="Trailer Warkop DKI Reborn" allowfullscreen></iframe>
+                    <p>Trailer Resmi</p>
+                    <div class="trailer-audio">
+                        <audio controls>
+                            <source src="sound jangkrik bos.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
 
-  <a href="index.html#kontak">
-    Kontak
-  </a>
+            <div class="film clickable" onclick="bukaFilm(1)" title="Klik untuk melihat detail film">
+                <img src="toko seblah.jfif" alt="Cek Toko Sebelah" class="poster-img">
+                <div class="film-info">
+                    <h4>2. Cek Toko Sebelah (2016)</h4>
+                    <p class="sutradara">Disutradarai oleh Ernest Prakasa &bull; Durasi 110 menit</p>
+                    <div class="meta-row">
+                        <span class="badge">Komedi</span>
+                        <span class="badge">Drama Keluarga</span>
+                        <span class="badge">⭐ 7.4/10</span>
+                        <span class="harga">Tiket Rp.50.000</span>
+                    </div>
+                    <p class="sinopsis">Mengisahkan konflik keluarga keturunan Tionghoa dalam menentukan siapa yang akan meneruskan toko kelontong milik sang ayah. Dibalut dengan humor khas Ernest Prakasa, film ini juga menyentuh isu keluarga dan hubungan antar saudara.</p>
+                </div>
+                <div class="film-trailer">
+                    <iframe src="https://www.youtube.com/embed/tEqCTPJGTk8" title="Trailer Cek Toko Sebelah" allowfullscreen></iframe>
+                    <p>Trailer Resmi</p>
+                    <div class="trailer-audio">
+                        <audio controls>
+                            <source src="toko seblah.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
 
-</nav>
+            <div class="film clickable" onclick="bukaFilm(2)" title="Klik untuk melihat detail film">
+                <img src="yowis.jpg" alt="Yowis Ben" class="poster-img">
+                <div class="film-info">
+                    <h4>3. Yowis Ben (2018)</h4>
+                    <p class="sutradara">Disutradarai oleh Bayu Skak &amp; Fajar Nugros &bull; Durasi 96 menit</p>
+                    <div class="meta-row">
+                        <span class="badge">Komedi</span>
+                        <span class="badge">Musikal</span>
+                        <span class="badge">⭐ 7.0/10</span>
+                        <span class="harga">Tiket Rp.50.000</span>
+                    </div>
+                    <p class="sinopsis">Film komedi bernuansa remaja yang bercerita tentang Bayu, seorang siswa SMA yang membentuk band bernama Yowis Ben setelah patah hati. Dengan dialog berbahasa Jawa yang kental dan humor yang jujur.</p>
+                </div>
+                <div class="film-trailer">
+                    <iframe src="https://www.youtube.com/embed/PvjiH2U6G-Q" title="Trailer Yowis Ben" allowfullscreen></iframe>
+                    <p>Trailer Resmi</p>
+                    <div class="trailer-audio">
+                        <audio controls>
+                            <source src="yowis.mp3" type="audio/mpeg">
+                            Browser Anda tidak mendukung elemen audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<button class="icon-btn" id="openMenu" aria-label="Buka menu">
-  <i class="fa-solid fa-bars"></i>
-</button>
-</header>
+        <!-- ===================== PROFIL ===================== -->
+        <section id="profil" class="page">
+            <h3 class="section-title">Profil Pengelola</h3>
+            <div class="profil-box">
+                <img src="foto-profil.jpg" alt="Foto Profil" class="profil-foto">
+                <div class="profil-text">
+                    <h4>arifin sanjaya</h4>
+                    <p>Halo! Saya pengelola sekaligus penulis konten di website <strong>Film Indonesia Seru</strong> ini. Saya memiliki ketertarikan besar terhadap dunia perfilman, khususnya perkembangan industri sinema Tanah Air dari masa ke masa.</p>
+                    <ul class="kontak-detail-list">
+                        <li><strong>Email:</strong> arifin@gmail.com</li>
+                        <li><strong>No. HP:</strong> 085211379801</li>
+                        <li><strong>Instagram:</strong> @arifinsnjya_</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-<div class="overlay" id="overlay"></div>
-<aside class="drawer" id="drawer" aria-hidden="true">
-  <div class="drawer-head">
-    <span class="logo"><img src="logo.png" alt="Logo SDN Cikuya 3"></span>
-    <span><strong>SDN CIKUYA 3</strong><small>"Belajar, tumbuh, berprestasi."</small></span>
-    <button class="close-btn" id="closeMenu" aria-label="Tutup menu"><i class="fa-solid fa-xmark"></i></button>
-  </div>
-  <nav>
-    <a href="#beranda"><i class="fa-solid fa-house"></i> Beranda</a>
-    <a href="profil.html"><i class="fa-solid fa-building-columns"></i> Profil Sekolah</a>
-    <a href="#galeri"><i class="fa-regular fa-images"></i> Galeri Kegiatan</a>
-    <a href="#warta"><i class="fa-regular fa-newspaper"></i> Berita &amp; Informasi</a>
-    <a href="#legalitas"><i class="fa-solid fa-award"></i> Akreditasi</a>
-    <a href="#kontak"><i class="fa-solid fa-phone"></i> Kontak</a>
-  </nav>
-  <div class="drawer-foot"><small>STATUS AKREDITASI</small><span class="badge gold">TERAKREDITASI B</span></div>
-</aside>
+        <!-- ===================== TENTANG ===================== -->
+        <section id="tentang" class="page">
+            <h3 class="section-title">Tentang Website Ini</h3>
+            <div class="tentang-box">
+                <p><strong>Pin Cinema-Film Indonesia Seru</strong> dibuat sebagai platform sederhana yang menghadirkan informasi dan rekomendasi seputar film-film Indonesia, mulai dari film klasik yang legendaris hingga karya-karya terbaru yang sedang populer.</p>
+                <p>Tujuan utama website ini adalah membantu pengunjung menemukan tontonan berkualitas dari sineas Tanah Air, lengkap dengan sinopsis, informasi sutradara, rating, harga tiket, hingga cuplikan trailer resmi — semuanya dalam satu tempat yang mudah diakses.</p>
+                <p>Selain itu, website ini juga diharapkan dapat menjadi wadah apresiasi terhadap perkembangan industri perfilman Indonesia, sekaligus mendorong lebih banyak orang untuk mendukung karya anak bangsa.</p>
+            </div>
+        </section>
 
-<main id="beranda">
-  <section class="hero">
-    <div class="hero-body">
-      <div class="chips"><span class="chip red"><i class="fa-solid fa-circle"></i> PPDB 2026/2027</span><span class="chip">Sekolah Berkualitas</span></div>
-      <h1>SDN Cikuya 3</h1>
-      <p>Membentuk generasi berkarakter Pancasila, cerdas, terampil, dan berakhlak mulia di era Merdeka Belajar.</p>
-      <a class="btn" href="profil.html">Profil Sekolah <i class="fa-solid fa-arrow-right"></i></a>
-    </div>
-  </section>
+        <!-- ===================== FOTO / GALERI ===================== -->
+        <section id="foto" class="page">
+            <h3 class="section-title">Galeri Foto</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="jangrik bos.jpg" alt="Warkop DKI Reborn">
+                    <p>Warkop DKI Reborn</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="toko seblah.jfif" alt="Cek Toko Sebelah">
+                    <p>Cek Toko Sebelah</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="yowis.jpg" alt="Yowis Ben">
+                    <p>Yowis Ben</p>
+                </div>
+            </div>
+        </section>
 
-  <div class="sheet">
-    <section class="card welcome">
-      <span class="tile blue"><i class="fa-solid fa-graduation-cap"></i></span>
-      <div><small class="label">SAMBUTAN SEKOLAH <span class="badge gold">2026/2027</span></small>
-      <p>"Pendidikan dasar adalah pondasi pekerti bangsa. Mari bersama wujudkan generasi hebat."</p></div>
-    </section>
 
-    <section id="data">
-      <h2 class="sec">Data Pokok Pendidikan</h2>
-      <div class="grid2">
-        <div class="card stat"><small>Total Siswa</small><b>445 <em>Anak</em></b><span class="foot">244 L &nbsp;•&nbsp; 201 P</span></div>
-        <div class="card stat"><small>Guru &amp; Tendik</small><b>14 <em>Pendidik</em></b><span class="foot">92.8% Sarjana S1/S2</span></div>
-        <div class="card stat"><small>Rombel</small><b>13 <em>Kelas</em></b><span class="foot">Rasio 35 Siswa/Rbl</span></div>
-        <div class="card stat"><small>Status Mutu</small><b class="gold-t">Grade B</b><span class="foot">BAN-S/M Banten</span></div>
-      </div>
+        <!-- ===================== REKOMENDASI FILM ===================== -->
+        <section id="rekomendasi" class="page">
+            <h3 class="section-title">Rekomendasi Film</h3>
 
-      <div class="card" id="legalitas">
-        <div class="legal-head"><span class="tile red"><i class="fa-solid fa-shield-halved"></i></span>
-          <div><strong>Legalitas Satuan Pendidikan</strong><small>Kementerian Pendidikan Dasar dan Menengah RI</small></div><span class="badge gold">NEGERI</span></div>
-        <div class="grid2 tight">
-          <div class="cell"><small>NPSN Resmi</small><b>20604200</b></div>
-          <div class="cell"><small>Kurikulum Aktif</small><b class="red-t">SD Merdeka</b></div>
-          <div class="cell"><small>Waktu KBM</small><b>6 Hari (Double Shift)</b></div>
-          <div class="cell"><small>Tahun Ajaran</small><b>2026/2027 Gasal</b></div>
+            <p>
+                Berikut beberapa rekomendasi film yang memiliki kategori, genre,
+                dan rating yang serupa dengan film pada daftar utama.
+            </p>
+
+            <div class="rekomendasi-table-wrap">
+                <table class="rekomendasi-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Poster</th>
+                            <th>Judul Film</th>
+                            <th>Tahun</th>
+                            <th>Genre</th>
+                            <th>Rating</th>
+                            <th>Pilihan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <img src="jangrik bos.jpg" alt="Warkop DKI Reborn" class="rekomendasi-poster">
+                            </td>
+                            <td><strong>Warkop DKI Reborn: Jangkrik Boss! Part 1</strong></td>
+                            <td>2016</td>
+                            <td><span class="rekomendasi-genre">Komedi</span></td>
+                            <td class="rekomendasi-rating">⭐ 6.8/10</td>
+                            <td>
+                                <button class="rekomendasi-btn" onclick="pilihFilm('Warkop DKI Reborn: Jangkrik Boss! Part 1')">
+                                    Pilih
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                <img src="toko seblah.jfif" alt="Cek Toko Sebelah" class="rekomendasi-poster">
+                            </td>
+                            <td><strong>Cek Toko Sebelah</strong></td>
+                            <td>2016</td>
+                            <td><span class="rekomendasi-genre">Komedi, Drama</span></td>
+                            <td class="rekomendasi-rating">⭐ 7.4/10</td>
+                            <td>
+                                <button class="rekomendasi-btn" onclick="pilihFilm('Cek Toko Sebelah')">
+                                    Pilih
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                <img src="yowis.jpg" alt="Yowis Ben" class="rekomendasi-poster">
+                            </td>
+                            <td><strong>Yowis Ben</strong></td>
+                            <td>2018</td>
+                            <td><span class="rekomendasi-genre">Komedi, Musikal</span></td>
+                            <td class="rekomendasi-rating">⭐ 7.0/10</td>
+                            <td>
+                                <button class="rekomendasi-btn" onclick="pilihFilm('Yowis Ben')">
+                                    Pilih
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===================== PAKET BERLANGGANAN ===================== -->
+        <section id="paket" class="page">
+            <h3 class="section-title">Pilihan Paket Berlangganan</h3>
+
+            <div class="subscription-wrapper">
+
+                <div class="sub-card">
+                    <div class="sub-card-header">
+                        <h4 class="sub-name">Reguler</h4>
+                        <p class="sub-price">Rp29.000<span>/bulan</span></p>
+                    </div>
+                    <ol class="sub-features">
+                        <li>Akses ke koleksi film dasar</li>
+                        <li>Kualitas tayang hingga 480p</li>
+                        <li>Dapat ditonton di 1 perangkat</li>
+                        <li>Iklan tetap ditampilkan</li>
+                    </ol>
+                    <button class="sub-btn">Pilih Reguler</button>
+                </div>
+
+                <div class="sub-card sub-card-highlight">
+                    <div class="sub-badge">Paling Populer</div>
+                    <div class="sub-card-header">
+                        <h4 class="sub-name">Premium</h4>
+                        <p class="sub-price">Rp59.000<span>/bulan</span></p>
+                    </div>
+                    <ol class="sub-features">
+                        <li>Akses ke seluruh koleksi film Indonesia</li>
+                        <li>Kualitas tayang hingga 1080p Full HD</li>
+                        <li>Dapat ditonton di 2 perangkat sekaligus</li>
+                        <li>Tanpa iklan</li>
+                        <li>Bisa diunduh untuk ditonton offline</li>
+                    </ol>
+                    <button class="sub-btn">Pilih Premium</button>
+                </div>
+
+                <div class="sub-card">
+                    <div class="sub-card-header">
+                        <h4 class="sub-name">VIP</h4>
+                        <p class="sub-price">Rp99.000<span>/bulan</span></p>
+                    </div>
+                    <ol class="sub-features">
+                        <li>Akses ke seluruh koleksi film, termasuk konten eksklusif</li>
+                        <li>Kualitas tayang hingga 4K Ultra HD</li>
+                        <li>Dapat ditonton di 4 perangkat sekaligus</li>
+                        <li>Tanpa iklan</li>
+                        <li>Bisa diunduh untuk ditonton offline</li>
+                        <li>Akses tayang perdana (premiere) lebih awal</li>
+                    </ol>
+                    <button class="sub-btn">Pilih VIP</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================== KONTAK ===================== -->
+        <section id="kontak" class="page">
+            <h3 class="section-title">Hubungi Kami</h3>
+            <div class="kontak-wrap">
+                <form class="kontak-form" onsubmit="return kirimPesan(event)">
+                    <label for="nama">Nama</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="nama@email.com" required>
+
+                    <label for="pesan">Pesan</label>
+                    <textarea id="pesan" name="pesan" rows="5" placeholder="Tulis pesan Anda di sini..." required></textarea>
+
+                    <button type="submit">Kirim Pesan</button>
+                </form>
+
+                <div class="kontak-info">
+                    <h4>Informasi Kontak</h4>
+                    <p>📧 Email: arifin@gmail.com</p>
+                    <p>📱 Instagram: @arifinsnjya_</p>
+                    <p>📞 No. HP: 085211379801</p>
+                    <p>📍 Alamat: Jakarta, Indonesia</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================== POPUP DETAIL FILM ===================== -->
+        <div id="filmModal" class="film-modal" onclick="tutupJikaLuar(event)">
+            <div class="film-modal-content">
+                <button class="film-modal-close" onclick="tutupFilm()" aria-label="Tutup">&times;</button>
+                <div id="filmModalContent"></div>
+            </div>
         </div>
-        <div class="note"><i class="fa-solid fa-book-open"></i> Rasio Siswa / Guru: 32<br>Proporsi Guru PNS/PPPK: 57.14%</div>
-      </div>
-    </section>
 
-    <section>
-      <h2 class="sec">Menu Layanan Cepat <small>Navigasi Utama</small></h2>
-      <div class="grid3">
-        <button class="quick" data-modal="visi"><span class="tile blue"><i class="fa-solid fa-flag"></i></span><b>Visi &amp; Misi</b><small>Tujuan Sekolah</small></button>
-        <button class="quick" data-modal="sejarah"><span class="tile blue"><i class="fa-solid fa-landmark"></i></span><b>Sejarah</b><small>Jejak Langkah</small></button>
-        <button class="quick" data-modal="pendidik"><span class="tile blue"><i class="fa-solid fa-people-group"></i></span><b>Pendidik</b><small>14 Tenaga Ahli</small></button>
-        <button class="quick" data-modal="ekskul"><span class="tile blue"><i class="fa-solid fa-person-running"></i></span><b>Ekskul</b><small>5 Cabang Bakat</small></button>
-        <button class="quick" data-modal="prestasi"><span class="tile gold"><i class="fa-solid fa-trophy"></i></span><b>Prestasi</b><small>Tingkat Kec/Kab</small></button>
-        <button class="quick" data-modal="kontak"><span class="tile blue"><i class="fa-solid fa-phone-volume"></i></span><b>Kontak</b><small>Info &amp; PPDB</small></button>
-      </div>
-    </section>
+    </main>
 
-    <section id="warta">
-      <h2 class="sec">Warta &amp; Pengumuman <small class="red-t">Terbaru</small></h2>
-      <article class="announce">
-        <span class="badge gold">PENTING</span> <small>Minggu Ini</small>
-        <h3>Jadwal Asesmen Pembelajaran &amp; Pembagian Rapor</h3>
-        <p>Diberitahukan kepada seluruh wali murid bahwa evaluasi sumatif akhir semester gasal 2026/2027 dimulai bulan depan.</p>
-      </article>
-      <article class="card news"><div class="thumb g1"><i class="fa-solid fa-seedling"></i></div>
-        <div><span class="badge gold">Kurikulum Merdeka</span><h3>Penerapan Projek Penguatan Profil Pelajar Pancasila (P5)</h3><small><i class="fa-regular fa-calendar"></i> 12 Oktober 2026</small></div></article>
-      <article class="card news"><div class="thumb g2"><i class="fa-solid fa-trophy"></i></div>
-        <div><span class="badge gold">Prestasi</span><h3>Juara 1 Lomba Cerdas Cermat &amp; Pramuka Tingkat Solear</h3><small><i class="fa-regular fa-calendar"></i> 28 September 2026</small></div></article>
-    </section>
+    <footer>
+        <p>&copy; web film seru indonesia.</p>
+    </footer>
 
-    <section id="ekskul">
-      <h2 class="sec">Ekstrakurikuler Pilihan <small>Minat &amp; Bakat</small></h2>
-      <div class="scroller">
-        <div class="card mini"><img class="mini-photo" src="ekskul-pramuka.jfif" alt="Pramuka Inti"><b>Pramuka Inti</b><small>Wajib Kelas 3-6</small></div>
-        <div class="card mini"><img class="mini-photo" src="ekskul-marawis.jpg" alt="Seni Marawis"><b>Seni Marawis</b><small>Pentas Religi</small></div>
-        <div class="card mini"><img class="mini-photo" src="ekskul-futsal.jfif" alt="Futsal"><b>Futsal</b><small>Olahraga</small></div>
-      </div>
-    </section>
-
-    <section id="galeri">
-      <h2 class="sec">Dokumentasi &amp; Galeri <small>Aktivitas Siswa</small></h2>
-      <div class="grid2">
-        <figure class="card gal"><img class="photo" src="upacara-bendera.jfif" alt="Upacara Bendera"><b>Upacara Bendera</b><small>Pembiasaan Cinta Tanah Air</small></figure>
-<figure class="card gal"><img class="photo" src="literasi-pagi.jfif" alt="Literasi Pagi"><b>Literasi Pagi</b><small>Gemar Membaca Buku</small></figure>
-      </div>
-      <div class="card prestasi"><strong><i class="fa-solid fa-trophy"></i> Pencapaian Siswa SDN Cikuya 3</strong>
-        <div class="row"><span class="num">1</span> Lomba Cerdas Cermat Solear <b class="red-t">Tingkat Kec.</b></div>
-        <div class="row"><span class="num">2</span> Pentas Seni Tari FLS2N SD <b class="red-t">Harapan 1</b></div>
-      </div>
-    </section>
-
-    <section id="kontak">
-      <h2 class="sec">Lokasi &amp; Kontak Resmi <small>Solear Tangerang</small></h2>
-      <div class="card">
-        <div class="map">
-          <iframe src="https://www.google.com/maps?q=-6.3116,106.4041&z=16&output=embed" width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Peta Lokasi SDN Cikuya 3"></iframe>
-          <div class="coord"><span>Titik: -6.3116, 106.4041</span>
-          <a href="https://www.google.com/maps?q=-6.3116,106.4041" target="_blank" rel="noopener">Buka Peta <i class="fa-solid fa-up-right-from-square"></i></a></div>
-        </div>
-        <div class="note addr"><small>ALAMAT LENGKAP SEKOLAH</small>Kp. Pala, Desa Cikuya, Kecamatan Solear, Kabupaten Tangerang, Provinsi Banten 15730.</div>
-        <a class="contact" href="https://wa.me/6281317178510" target="_blank" rel="noopener"><span class="tile red round"><i class="fa-brands fa-whatsapp"></i></span><span><small>Telepon / WhatsApp Humas</small><b>0813-1717-8510</b></span><i class="fa-solid fa-chevron-right"></i></a>
-        <a class="contact" href="https://mail.google.com/mail/?view=cm&fs=1&to=sdncikuya30@gmail.com" target="_blank" rel="noopener"><span class="tile blue round"><i class="fa-regular fa-envelope"></i></span><span><small>Surel Resmi (E-Mail)</small><b>sdncikuya30@gmail.com</b></span><i class="fa-solid fa-chevron-right"></i></a>
-      </div>
-      <div class="card tagline"><i class="fa-solid fa-hands-holding-child red-t"></i> <b class="red-t">PENDIDIKAN RAMAH ANAK</b><small>Mendukung program Merdeka Belajar untuk mencetak anak didik yang mandiri, kritis, berkebinekaan global, dan bahagia di lingkungan sekolah.</small></div>
-    </section>
-  </div>
-</main>
-
-<footer class="footer">
-  <div class="brand"><span class="logo"><img src="logo.png" alt="Logo SDN Cikuya 3"></span><span><strong>SD NEGERI CIKUYA 3</strong><small>"Belajar, tumbuh, berprestasi."</small></span></div>
-  <p>Mewujudkan generasi muda Indonesia yang berakhlak mulia, berprestasi, cerdas, berkarakter Profil Pelajar Pancasila, dan cinta tanah air.</p>
-  <h4>ALAMAT LENGKAP</h4><p>Kp. Pala, Desa Cikuya, Kec. Solear, Kab. Tangerang, Prov. Banten</p>
-  <h4>KONTAK RESMI</h4><p><i class="fa-solid fa-phone"></i> 0813-1717-8510<br><i class="fa-regular fa-envelope"></i> sdncikuya30@gmail.com</p>
- <div class="social">
-  <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-  <a href="https://www.instagram.com/sdncikuya3" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-  <a href="https://youtube.com/@sdncikuya03" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
 </div>
-  <div class="chips"><span class="chip dark">Akreditasi B</span><span class="chip dark">Kurikulum Merdeka</span></div>
-  <small class="copy">© 2026/2027 SD Negeri Cikuya 3. Hak Cipta Dilindungi Undang-Undang.</small>
-</footer>
 
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-box"><button class="close-btn dark" id="closeModal" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
-    <h3 id="modalTitle"></h3><div id="modalBody"></div></div>
-</div>
-<script src="script.js"></script>
+<script>
+    function gantiHalaman(idHalaman, elemenLink) {
+        document.querySelectorAll('section.page').forEach(function (sec) {
+            sec.classList.remove('active');
+        });
+        document.getElementById(idHalaman).classList.add('active');
+
+        document.querySelectorAll('.nav-link').forEach(function (link) {
+            link.classList.remove('active');
+        });
+        elemenLink.classList.add('active');
+    }
+
+
+    function pilihFilm(judul) {
+        alert('Anda memilih film: ' + judul);
+    }
+
+
+
+    const dataFilm = [
+        {
+            judul: 'Warkop DKI Reborn: Jangkrik Boss! Part 1',
+            tahun: '2016',
+            poster: 'jangrik bos.jpg',
+            genre: 'Komedi',
+            rating: '6.8/10',
+            sutradara: 'Anggy Umbara',
+            durasi: '100 menit',
+            harga: 'Rp.50.000',
+            sinopsis: 'Film ini menghidupkan kembali trio legendaris Dono, Kasino, dan Indro dengan gaya komedi slapstick khas Warkop yang dikemas untuk generasi baru.',
+            trailer: 'https://www.youtube.com/embed/lmuNabammwk'
+        },
+        {
+            judul: 'Cek Toko Sebelah',
+            tahun: '2016',
+            poster: 'toko seblah.jfif',
+            genre: 'Komedi, Drama Keluarga',
+            rating: '7.4/10',
+            sutradara: 'Ernest Prakasa',
+            durasi: '110 menit',
+            harga: 'Rp.50.000',
+            sinopsis: 'Mengisahkan konflik keluarga dalam menentukan siapa yang akan meneruskan toko kelontong milik sang ayah.',
+            trailer: 'https://www.youtube.com/embed/tEqCTPJGTk8'
+        },
+        {
+            judul: 'Yowis Ben',
+            tahun: '2018',
+            poster: 'yowis.jpg',
+            genre: 'Komedi, Musikal',
+            rating: '7.0/10',
+            sutradara: 'Bayu Skak & Fajar Nugros',
+            durasi: '96 menit',
+            harga: 'Rp.50.000',
+            sinopsis: 'Film komedi remaja tentang Bayu yang membentuk band bernama Yowis Ben setelah mengalami patah hati.',
+            trailer: 'https://www.youtube.com/embed/PvjiH2U6G-Q'
+        }
+    ];
+
+    function bukaFilm(index) {
+        const film = dataFilm[index];
+        const modal = document.getElementById('filmModal');
+        const isi = document.getElementById('filmModalContent');
+
+        isi.innerHTML = `
+            <h2 style="color:#1a237e; margin-top:0;">Detail Film</h2>
+            <div class="film-modal-body">
+                <img src="${film.poster}" alt="${film.judul}" class="film-modal-poster">
+                <div class="film-modal-info">
+                    <h3>${film.judul} (${film.tahun})</h3>
+                    <p><strong>Genre:</strong> ${film.genre}</p>
+                    <p><strong>Rating:</strong> ⭐ ${film.rating}</p>
+                    <p><strong>Sutradara:</strong> ${film.sutradara}</p>
+                    <p><strong>Durasi:</strong> ${film.durasi}</p>
+                    <p><strong>Harga Tiket:</strong> <span style="color:#c62828;font-weight:bold;">${film.harga}</span></p>
+                    <p><strong>Sinopsis:</strong><br>${film.sinopsis}</p>
+                </div>
+            </div>
+            <div class="film-modal-trailer" style="margin-top:20px;">
+                <h3 style="color:#1a237e;">Trailer</h3>
+                <iframe src="${film.trailer}" title="Trailer ${film.judul}" allowfullscreen></iframe>
+            </div>
+        `;
+
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function tutupFilm() {
+        document.getElementById('filmModal').classList.remove('show');
+        document.body.style.overflow = '';
+        document.getElementById('filmModalContent').innerHTML = '';
+    }
+
+    function tutupJikaLuar(event) {
+        if (event.target === document.getElementById('filmModal')) {
+            tutupFilm();
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') tutupFilm();
+    });
+
+    function kirimPesan(event) {
+        event.preventDefault();
+        alert('Terima kasih! Pesan Anda telah terkirim (simulasi — belum terhubung ke server).');
+        event.target.reset();
+        return false;
+    }
+</script>
+
 </body>
 </html>
