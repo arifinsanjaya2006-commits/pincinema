@@ -44,6 +44,133 @@
         color: #1a237e;
     }
 
+    /* ===== MOBILE: Hamburger menu + Sidebar (hanya layar HP) ===== */
+    /* Di laptop/desktop semua elemen mobile ini disembunyikan */
+    .mobile-topbar,
+    .sidebar,
+    .sidebar-overlay { display: none; }
+
+    @media (max-width: 700px) {
+        /* Menu horizontal lama disembunyikan, diganti hamburger + sidebar */
+        nav { display: none; }
+
+        /* Bar atas */
+        .mobile-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background: #1a237e;
+            color: #fff;
+            padding: 12px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+        .mobile-brand { font-weight: bold; font-size: 18px; letter-spacing: 0.5px; }
+        .hamburger-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 0;
+        }
+        .hamburger-btn span {
+            display: block;
+            width: 22px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        /* Lapisan gelap di belakang sidebar */
+        .sidebar-overlay {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* Sidebar dari kiri */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 80%;
+            max-width: 310px;
+            background: #fff;
+            z-index: 1001;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        }
+        .sidebar.open { transform: translateX(0); }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1a237e;
+            color: #fff;
+            padding: 20px 16px;
+        }
+        .sidebar-header strong { display: block; font-size: 20px; }
+        .sidebar-header small { font-size: 13px; opacity: 0.85; }
+        .sidebar-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 15px 20px;
+            color: #222;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .sidebar-menu a .side-icon { width: 24px; text-align: center; font-size: 18px; }
+        .sidebar-menu a.active {
+            background: #eef0fa;
+            color: #1a237e;
+            border-left-color: #c62828;
+        }
+        .sidebar-footer {
+            padding: 14px 20px;
+            background: #eef0fa;
+            font-size: 12px;
+            color: #666;
+        }
+    }
+
     section.page { display: none; }
     section.page.active { display: block; }
 
@@ -508,9 +635,138 @@
             transform: translateY(-4px);
         }
     }
+
+    /* ===== Form Registrasi Pelanggan ===== */
+    .reg-form {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-top: 4px solid #1a237e;
+        border-radius: 8px;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .reg-form label.reg-label { font-weight: bold; font-size: 14px; }
+    .reg-form input[type="text"],
+    .reg-form input[type="email"],
+    .reg-form input[type="password"],
+    .reg-form select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        width: 100%;
+        background: #fff;
+    }
+    .reg-form input:focus,
+    .reg-form select:focus {
+        outline: none;
+        border-color: #1a237e;
+    }
+
+    .reg-bayar-opsi {
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 12px 14px;
+        cursor: pointer;
+        background: #fafafa;
+    }
+    .reg-bayar-opsi:hover { background: #eef0fa; }
+    .reg-bayar-opsi input { margin-right: 8px; }
+    .reg-bayar-opsi strong { color: #1a237e; }
+
+    .reg-logo-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 10px 0 0 24px;
+    }
+    .reg-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 28px;
+        min-width: 56px;
+        padding: 0 10px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        background: #fff;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    .logo-visa { color: #1a1f71; font-style: italic; font-size: 15px; letter-spacing: 1px; }
+    .logo-gopay { background: #00aed6; color: #fff; border-color: #00aed6; }
+    .logo-ovo { background: #4c3494; color: #fff; border-color: #4c3494; }
+    .logo-dana { background: #118eea; color: #fff; border-color: #118eea; }
+    .logo-mc svg { display: block; }
+
+    .reg-input-tambahan {
+        display: none;
+        margin: 10px 0 0 24px;
+    }
+    .reg-input-tambahan.show { display: block; }
+
+    .reg-form .reg-btn {
+        background: #c62828;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 6px;
+    }
+    .reg-form .reg-btn:hover { background: #a01f1f; }
+
+    .reg-pesan {
+        display: none;
+        padding: 12px 14px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    .reg-pesan.sukses { display: block; background: #e8f5e9; color: #2e7d32; border-left: 5px solid #2e7d32; }
+    .reg-pesan.gagal { display: block; background: #fdecea; color: #c62828; border-left: 5px solid #c62828; }
 </style>
 </head>
 <body>
+
+<!-- ===== MOBILE: Top bar, overlay & sidebar (tersembunyi di laptop) ===== -->
+<div class="mobile-topbar">
+    <span class="mobile-brand">PinCinema</span>
+    <button class="hamburger-btn" onclick="bukaSidebar()" aria-label="Buka menu">
+        <span></span><span></span><span></span>
+    </button>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="tutupSidebar()"></div>
+
+<aside class="sidebar" id="sidebar" aria-label="Menu navigasi">
+    <div class="sidebar-header">
+        <div>
+            <strong>PinCinema</strong>
+            <small>Film Indonesia Seru</small>
+        </div>
+        <button class="sidebar-close" onclick="tutupSidebar()" aria-label="Tutup menu">&times;</button>
+    </div>
+    <div class="sidebar-menu">
+        <a data-page="beranda" class="active" onclick="pilihMenuMobile('beranda')"><span class="side-icon">🏠</span>Beranda</a>
+        <a data-page="profil" onclick="pilihMenuMobile('profil')"><span class="side-icon">👤</span>Profil</a>
+        <a data-page="tentang" onclick="pilihMenuMobile('tentang')"><span class="side-icon">ℹ️</span>Tentang</a>
+        <a data-page="foto" onclick="pilihMenuMobile('foto')"><span class="side-icon">🖼️</span>Foto</a>
+        <a data-page="rekomendasi" onclick="pilihMenuMobile('rekomendasi')"><span class="side-icon">⭐</span>Rekomendasi</a>
+        <a data-page="paket" onclick="pilihMenuMobile('paket')"><span class="side-icon">📦</span>Paket</a>
+        <a data-page="daftar" onclick="pilihMenuMobile('daftar')"><span class="side-icon">📝</span>Daftar</a>
+        <a data-page="kontak" onclick="pilihMenuMobile('kontak')"><span class="side-icon">📞</span>Kontak</a>
+    </div>
+    <div class="sidebar-footer">&copy; PinCinema</div>
+</aside>
 
 <div class="wrapper">
 
@@ -526,6 +782,7 @@
         <a class="nav-link" data-page="foto" onclick="gantiHalaman('foto', this)">Foto</a>
         <a class="nav-link" data-page="rekomendasi" onclick="gantiHalaman('rekomendasi', this)">Rekomendasi</a>
         <a class="nav-link" data-page="paket" onclick="gantiHalaman('paket', this)">Paket</a>
+        <a class="nav-link" data-page="daftar" onclick="gantiHalaman('daftar', this)">Daftar</a>
         <a class="nav-link" data-page="kontak" onclick="gantiHalaman('kontak', this)">Kontak</a>
     </nav>
 
@@ -787,6 +1044,69 @@
             </div>
         </section>
 
+        <!-- ===================== REGISTRASI PELANGGAN ===================== -->
+        <section id="daftar" class="page">
+            <h3 class="section-title">Registrasi Pelanggan</h3>
+
+            <form class="reg-form" id="formRegistrasi" onsubmit="daftarSekarang(event)" novalidate>
+
+                <label class="reg-label" for="regNama">Nama Lengkap</label>
+                <input type="text" id="regNama" placeholder="Masukkan nama lengkap">
+
+                <label class="reg-label" for="regEmail">Email</label>
+                <input type="email" id="regEmail" placeholder="nama@email.com">
+
+                <label class="reg-label" for="regPassword">Password</label>
+                <input type="password" id="regPassword" placeholder="Minimal 6 karakter">
+
+                <label class="reg-label" for="regPaket">Pilihan Paket</label>
+                <select id="regPaket">
+                    <option value="">-- Pilih Paket --</option>
+                    <option value="Basic">Basic</option>
+                    <option value="Standar">Standar</option>
+                    <option value="Premium">Premium</option>
+                </select>
+
+                <label class="reg-label">Metode Pembayaran</label>
+
+                <!-- Pilihan 1: Kartu -->
+                <label class="reg-bayar-opsi">
+                    <input type="radio" name="metode" value="kartu" onchange="tampilkanInputBayar()">
+                    <strong>Kartu Debit/Kredit</strong>
+                    <div class="reg-logo-row">
+                        <span class="reg-logo logo-visa">VISA</span>
+                        <span class="reg-logo logo-mc">
+                            <svg width="38" height="24" viewBox="0 0 38 24" aria-label="Mastercard">
+                                <circle cx="13" cy="12" r="10" fill="#eb001b"/>
+                                <circle cx="25" cy="12" r="10" fill="#f79e1b" fill-opacity="0.9"/>
+                            </svg>
+                        </span>
+                    </div>
+                </label>
+                <div class="reg-input-tambahan" id="boxKartu">
+                    <input type="text" id="regNoKartu" placeholder="Nomor kartu (16 digit)" maxlength="19">
+                </div>
+
+                <!-- Pilihan 2: Dompet Digital -->
+                <label class="reg-bayar-opsi">
+                    <input type="radio" name="metode" value="dompet" onchange="tampilkanInputBayar()">
+                    <strong>Dompet Digital</strong>
+                    <div class="reg-logo-row">
+                        <span class="reg-logo logo-gopay">GoPay</span>
+                        <span class="reg-logo logo-ovo">OVO</span>
+                        <span class="reg-logo logo-dana">DANA</span>
+                    </div>
+                </label>
+                <div class="reg-input-tambahan" id="boxDompet">
+                    <input type="text" id="regNoDompet" placeholder="Nomor HP / akun dompet digital" maxlength="15">
+                </div>
+
+                <div id="regPesan" class="reg-pesan"></div>
+
+                <button type="submit" class="reg-btn">Daftar Sekarang</button>
+            </form>
+        </section>
+
         <!-- ===================== KONTAK ===================== -->
         <section id="kontak" class="page">
             <h3 class="section-title">Hubungi Kami</h3>
@@ -842,6 +1162,7 @@
             link.classList.remove('active');
         });
         elemenLink.classList.add('active');
+        elemenLink.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
 
@@ -941,6 +1262,119 @@
         event.target.reset();
         return false;
     }
+
+    // ===== Registrasi Pelanggan =====
+    function tampilkanInputBayar() {
+        const metode = document.querySelector('input[name="metode"]:checked').value;
+        document.getElementById('boxKartu').classList.toggle('show', metode === 'kartu');
+        document.getElementById('boxDompet').classList.toggle('show', metode === 'dompet');
+    }
+
+    function tampilkanPesan(teks, jenis) {
+        const box = document.getElementById('regPesan');
+        box.textContent = teks;
+        box.className = 'reg-pesan ' + jenis;
+    }
+
+    function daftarSekarang(event) {
+        event.preventDefault();
+
+        const nama = document.getElementById('regNama').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const paket = document.getElementById('regPaket').value;
+        const metodeDipilih = document.querySelector('input[name="metode"]:checked');
+
+        // Cek apakah ada data yang belum diisi
+        if (nama === '' || email === '' || password === '' || paket === '' || !metodeDipilih) {
+            tampilkanPesan('Mohon lengkapi semua data terlebih dahulu.', 'gagal');
+            return;
+        }
+
+        // Validasi sederhana email dan password
+        if (email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+            tampilkanPesan('Format email tidak valid.', 'gagal');
+            return;
+        }
+        if (password.length < 6) {
+            tampilkanPesan('Password minimal 6 karakter.', 'gagal');
+            return;
+        }
+
+        // Cek nomor kartu / dompet digital sesuai metode yang dipilih
+        if (metodeDipilih.value === 'kartu') {
+            const noKartu = document.getElementById('regNoKartu').value.replace(/\s/g, '');
+            if (noKartu === '') {
+                tampilkanPesan('Mohon isi nomor kartu Anda.', 'gagal');
+                return;
+            }
+            if (isNaN(noKartu) || noKartu.length !== 16) {
+                tampilkanPesan('Nomor kartu harus berupa 16 digit angka.', 'gagal');
+                return;
+            }
+        } else {
+            const noDompet = document.getElementById('regNoDompet').value.trim();
+            if (noDompet === '') {
+                tampilkanPesan('Mohon isi nomor/akun dompet digital Anda.', 'gagal');
+                return;
+            }
+            if (isNaN(noDompet)) {
+                tampilkanPesan('Nomor dompet digital harus berupa angka.', 'gagal');
+                return;
+            }
+        }
+
+        // Semua data lengkap
+        tampilkanPesan('Registrasi berhasil! Selamat datang, ' + nama + '. Paket ' + paket + ' Anda sudah aktif.', 'sukses');
+        document.getElementById('formRegistrasi').reset();
+        tampilkanInputBayar_reset();
+    }
+
+    function tampilkanInputBayar_reset() {
+        document.getElementById('boxKartu').classList.remove('show');
+        document.getElementById('boxDompet').classList.remove('show');
+    }
+
+    // ===== MOBILE: Sidebar hamburger =====
+    function sinkronMenuMobile() {
+        // samakan menu aktif sidebar dengan halaman yang sedang tampil
+        const aktif = document.querySelector('nav .nav-link.active');
+        const halaman = aktif ? aktif.getAttribute('data-page') : 'beranda';
+        document.querySelectorAll('.sidebar-menu a').forEach(function (a) {
+            a.classList.toggle('active', a.getAttribute('data-page') === halaman);
+        });
+    }
+
+    function bukaSidebar() {
+        sinkronMenuMobile();
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function tutupSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function pilihMenuMobile(idHalaman) {
+        // pakai fungsi gantiHalaman yang sudah ada
+        const linkAsli = document.querySelector('nav .nav-link[data-page="' + idHalaman + '"]');
+        gantiHalaman(idHalaman, linkAsli);
+        sinkronMenuMobile();
+        tutupSidebar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') tutupSidebar();
+    });
+
+    // kalau layar diperbesar ke ukuran laptop, pastikan sidebar tertutup
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 700) tutupSidebar();
+    });
 </script>
 
 </body>
